@@ -1,0 +1,48 @@
+package com.mixplus.library.system;
+
+
+
+import oshi.SystemInfo;
+import oshi.hardware.CentralProcessor;
+import unit.DataUnit;
+
+
+public final class CPU {
+
+    private static final CentralProcessor PROCESSOR =
+            new SystemInfo().getHardware().getProcessor();
+
+    private static long[] ticks =
+            PROCESSOR.getSystemCpuLoadTicks();
+
+    private static volatile double usage;
+
+    private CPU() {
+    }
+
+    /**
+     * Updates the system-wide CPU usage measurement.
+     *
+     * <p>The first call may return a CPU usage of {@code 0.0} because
+     * there is no previous measurement interval available yet.</p>
+     */
+    public static void update() {
+        long[] currentTicks = PROCESSOR.getSystemCpuLoadTicks();
+
+        usage = PROCESSOR.getSystemCpuLoadBetweenTicks(ticks) * 100.0;
+
+        ticks = currentTicks;
+    }
+
+    /**
+     * Returns the latest measured system-wide CPU usage.
+     *
+     * <p>The initial value is {@code 0.0} until {@link #update()} has
+     * been called with a sufficient interval since the initial measurement.</p>
+     *
+     * @return the latest CPU usage as a percentage, from {@code 0.0} to {@code 100.0}
+     */
+    public static double getUsage() {
+        return usage;
+    }
+}
