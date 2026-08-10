@@ -4,7 +4,7 @@ package com.mixplus.library.system;
 
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
-import unit.DataUnit;
+import com.mixplus.library.unit.*;
 
 
 public final class CPU {
