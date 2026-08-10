@@ -15,18 +15,6 @@ public class test {
 
 
     static void main(String[] args) {
-        System.out.println("Total");
-        System.out.println("BYTE" + Memory.getTotal(DataUnit.BYTE));
-        System.out.println("KB" + Memory.getTotal(DataUnit.KB));
-        System.out.println("MB" + Memory.getTotal(DataUnit.MB));
-        System.out.println("GB" + Memory.getTotal(DataUnit.GB));
-        System.out.println("TB" + Memory.getTotal(DataUnit.TB));
-
-        System.out.println("Total  : " + Memory.getTotal(DataUnit.BYTE) + " BYTE");
-        System.out.println("Used   : " + Memory.getUsed(DataUnit.BYTE) + " BYTE");
-        System.out.println("Free   : " + Memory.getAvailable(DataUnit.BYTE) + " BYTE");
-        System.out.println("Usage  : " + Memory.getUsage() + "%");
-
 
     }
 }

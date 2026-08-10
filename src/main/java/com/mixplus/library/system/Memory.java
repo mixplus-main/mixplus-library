@@ -4,8 +4,7 @@ package com.mixplus.library.system;
 
 import oshi.SystemInfo;
 import oshi.hardware.GlobalMemory;
-import unit.DataUnit;
-import unit.Percentage;
+import com.mixplus.library.unit.*;
 
 
 /**
