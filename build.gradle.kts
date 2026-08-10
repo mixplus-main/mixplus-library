@@ -1,9 +1,29 @@
 plugins {
     id("java-library")
+    id("maven-publish")
 }
 
 group = "com.mixplus.library"
-version = "1.0-SNAPSHOT"
+version = "1.0.0-SNAPSHOT"
+
+publishing {
+    repositories {
+        maven {
+            name = "GithubPackages"
+            url = uri("https://maven.pkg.github.com/mixplus-main/mixplus-library")
+
+            credentials {
+                username = System.getenv("GITHUB_USERNAME")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+    publications {
+        register<MavenPublication>("gpr") {
+            from(components["java"])
+        }
+    }
+}
 
 repositories {
     mavenCentral()
