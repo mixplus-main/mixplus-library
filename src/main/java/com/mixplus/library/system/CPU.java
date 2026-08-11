@@ -25,6 +25,7 @@ public final class CPU {
      *
      * <p>The first call may return a CPU usage of {@code 0.0} because
      * there is no previous measurement interval available yet.</p>
+     * @since 1.0.1
      */
     public static void update() {
         long[] currentTicks = PROCESSOR.getSystemCpuLoadTicks();
@@ -41,8 +42,19 @@ public final class CPU {
      * been called with a sufficient interval since the initial measurement.</p>
      *
      * @return the latest CPU usage as a percentage, from {@code 0.0} to {@code 100.0}
+     * @since 1.0.1
      */
     public static double getUsage() {
         return usage;
+    }
+
+    /**
+     * Returns the name of the CPU.
+     *
+     * @return the CPU name
+     * @since 1.1.1
+     */
+    public static String getName() {
+        return PROCESSOR.getProcessorIdentifier().getName();
     }
 }

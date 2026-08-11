@@ -5,6 +5,7 @@ package com.mixplus.library.unit;
  * Units for representing data sizes.
  *
  * <p>All units use a base of 1024.</p>
+ * @since 1.0.1
  */
 public enum DataUnit {
     BYTE(1),
