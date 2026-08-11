@@ -57,4 +57,37 @@ public final class CPU {
     public static String getName() {
         return PROCESSOR.getProcessorIdentifier().getName();
     }
+
+    /**
+     * Returns the number of physical CPU cores.
+     *
+     * @return the number of physical CPU cores
+     * @since 1.1.3
+     */
+    public static int getPhysicalProcessorCount() {
+        return PROCESSOR.getPhysicalProcessorCount();
+    }
+
+    /**
+     * Returns the number of logical processors.
+     *
+     * <p>The logical processor count includes threads provided by
+     * technologies such as simultaneous multithreading (SMT).</p>
+     *
+     * @return the number of logical processors
+     * @since 1.1.3
+     */
+    public static int getLogicalProcessorCount() {
+        return PROCESSOR.getLogicalProcessorCount();
+    }
+
+    /**
+     * Returns the maximum CPU frequency reported by the operating system.
+     *
+     * @return the maximum CPU frequency in hertz, or {@code -1}
+     *         if the frequency cannot be determined
+     */
+    public static long getMaxFrequency() {
+        return PROCESSOR.getMaxFreq();
+    }
 }
