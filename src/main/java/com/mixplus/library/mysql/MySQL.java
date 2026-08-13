@@ -318,11 +318,20 @@ public class MySQL {
     }
 
     public boolean isDatabase(String databaseName) {
-        String sql = "SHOW DATABASES LIKE ?";
+        String url = "jdbc:mysql://" + host + ":" + port;
+        String sql = """
+            SELECT 1
+            FROM INFORMATION_SCHEMA.SCHEMATA
+            WHERE LOWER(SCHEMA_NAME) = LOWER(?)
+            """;
 
         try (
-                PreparedStatement statement = connection.prepareStatement(sql)
-                ) {
+                Connection connection = DriverManager.getConnection(
+                        url,
+                        username,
+                        password
+                );
+                PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, databaseName);
 
             try (ResultSet resultSet = statement.executeQuery()) {
