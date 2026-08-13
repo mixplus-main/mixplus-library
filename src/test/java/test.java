@@ -20,39 +20,29 @@ public class test {
 
 
 
-        try {
-            mySQL.executeUpdate("""
-                drop table ttt;
-                """);
-        } catch (Exception e) {
-            System.out.println("ERROR");
+
+        if (!mySQL.isTable("ttt")) {
+            mySQL.createTable(
+                    "ttt",
+                    Column.of("id", DataType.INT).primaryKey(),
+                    Column.of("name", DataType.VARCHAR, 30)
+            );
         }
 
-        mySQL.createTable(
-                "ttt",
-                Column.of("id", DataType.INT).primaryKey(),
-                Column.of("name", DataType.VARCHAR, 30)
-        );
 
-        mySQL.insert(
-                "ttt",
-                Map.of("id", 5,
-                        "name", "teahi"
-                )
-                );
 
         int count = mySQL.update(
                 "ttt",
                 Map.of(
                         "id", 0,
-                        "name", ""
+                        "name", "5LLL"
                 ),
-                Where.of("id", "=", 5)
+                Where.of("id").equal(0)
         );
 
         int c2 = mySQL.delete(
                 "ttt",
-                Where.of("id", "=", 5)
+                Where.of("id").equal(5)
         );
 
 

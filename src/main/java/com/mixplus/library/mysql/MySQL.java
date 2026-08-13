@@ -19,6 +19,20 @@ public class MySQL {
 
     private Connection connection;
 
+    public MySQL(
+            String host,
+            int port,
+            String username,
+            String password,
+            String database
+    ) {
+        this.host = host;
+        this.port = port;
+        this.username = username;
+        this.password = password;
+        this.database = database;
+    }
+
     public MySQL() {
 
     }

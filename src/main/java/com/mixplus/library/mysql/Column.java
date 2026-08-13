@@ -41,7 +41,7 @@ public class Column {
             throw new IllegalArgumentException("Type cannot be null");
         }
 
-        if (type.requiresSize()) {
+        if (!type.requiresSize()) {
             throw new IllegalArgumentException(
                     type + " requires a size"
             );
