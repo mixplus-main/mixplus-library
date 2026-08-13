@@ -78,11 +78,7 @@ public class Column {
     }
 
     public Column unique() {
-        if (!type.equals("INT") && !type.equals("BIGINT")) {
-            throw new IllegalStateException(
-                    "UNIQUE requires an integer type"
-            );
-        }
+
 
         this.unique = true;
         return this;
