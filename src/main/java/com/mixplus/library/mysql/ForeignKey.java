@@ -2,7 +2,7 @@ package com.mixplus.library.mysql;
 
 import com.mixplus.library.util.StringUtil;
 
-public class ForeignKey {
+public class ForeignKey implements TableElement {
     private final String column;
     private final String referenceTable;
     private final String referenceColumn;
@@ -48,6 +48,7 @@ public class ForeignKey {
         );
     }
 
+    @Override
     public String toSQL() {
         return "FOREIGN KEY (" + column + ") REFERENCES "
                 + referenceTable
