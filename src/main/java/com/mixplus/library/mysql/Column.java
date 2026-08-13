@@ -1,6 +1,6 @@
 package com.mixplus.library.mysql;
 
-import com.mixplus.library.unit.StringUtil;
+import com.mixplus.library.util.StringUtil;
 
 
 public class Column {

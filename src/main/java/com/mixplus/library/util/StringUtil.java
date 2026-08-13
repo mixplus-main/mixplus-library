@@ -1,4 +1,4 @@
-package com.mixplus.library.unit;
+package com.mixplus.library.util;
 
 public class StringUtil {
     public static boolean isValidIdentifier(String value) {
