@@ -21,7 +21,7 @@ public enum DataType {
         this.requiresSize = requiresSize;
     }
 
-    public String getSql() {
+    public String toSQL() {
         return sql;
     }
 

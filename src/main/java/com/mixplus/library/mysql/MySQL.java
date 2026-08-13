@@ -97,24 +97,25 @@ public class MySQL {
         }
     }
 
-    public void createTable(String tableName, Column...columns) {
+    public void createTable(String tableName, TableElement... elements) {
         if (!StringUtil.isValidIdentifier(tableName)) {
             throw new IllegalArgumentException(
                     "Invalid table name: " + tableName
             );
         }
 
-        if (columns == null || columns.length == 0) {
+        if (elements == null || elements.length == 0) {
             throw new IllegalArgumentException(
-                    "Columns cannot be null or empty"
+                    "Table must contain at least one element"
             );
         }
-
-        String definitions = Arrays.stream(columns)
-                .map(Column::toSQL)
+        String columns = Arrays.stream(elements)
+                .map(TableElement::toSQL)
                 .collect(Collectors.joining(", "));
 
-        String sql = "CREATE TABLE " + tableName + " (" + definitions + ")";
+
+
+        String sql = "CREATE TABLE " + tableName + " (" + columns + ")";
 
         executeUpdate(sql);
 
@@ -197,7 +198,7 @@ public class MySQL {
 
         String sql = "UPDATE " + tableName +
                 " SET " + set +
-                " WHERE " + where.getSql();
+                " WHERE " + where.toSQL();
 
         try (
                 PreparedStatement statement = connection.prepareStatement(sql)
@@ -234,7 +235,7 @@ public class MySQL {
             );
         }
 
-        String sql = "DELETE FROM " + tableName + " WHERE " + where.getSql();
+        String sql = "DELETE FROM " + tableName + " WHERE " + where.toSQL();
 
         try (
                 PreparedStatement statement = connection.prepareStatement(sql)

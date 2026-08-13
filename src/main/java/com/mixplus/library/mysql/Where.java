@@ -5,7 +5,7 @@ import com.mixplus.library.util.StringUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Where {
+public class Where implements TableElement {
     private final StringBuilder sql = new StringBuilder();
     private final List<Object> parameters = new ArrayList<>();
 
@@ -73,7 +73,8 @@ public class Where {
         return this;
     }
 
-    public String getSql() {
+    @Override
+    public String toSQL() {
         return this.sql.toString();
     }
 

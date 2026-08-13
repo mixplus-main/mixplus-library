@@ -3,7 +3,7 @@ package com.mixplus.library.mysql;
 import com.mixplus.library.util.StringUtil;
 
 
-public class Column {
+public class Column implements TableElement {
     private final String name;
     private final String type;
 
@@ -35,7 +35,7 @@ public class Column {
                     type + " requires a size"
             );
         }
-        return new Column(name, type.getSql());
+        return new Column(name, type.toSQL());
     }
 
     public static Column of(String name, DataType type, int size) {
@@ -57,7 +57,7 @@ public class Column {
 
         return new Column(
                 name,
-                type.getSql() + "(" + size + ")"
+                type.toSQL() + "(" + size + ")"
         );
     }
 
@@ -87,6 +87,7 @@ public class Column {
         return this;
     }
 
+    @Override
     public String toSQL() {
         StringBuilder sql = new StringBuilder();
 
