@@ -9,6 +9,7 @@ public class Column {
 
     private boolean primaryKey;
     private boolean notNull;
+    private boolean autoIncrement;
 
     private Column(String name, String type) {
         if (!StringUtil.isValidIdentifier(name)) {
@@ -64,6 +65,17 @@ public class Column {
         return this;
     }
 
+    public Column ai() {
+        if (!type.equals("INT") && !type.equals("BIGINT")) {
+            throw new IllegalStateException(
+                    "AUTO_INCREMENT requires an integer type"
+            );
+        }
+
+        this.autoIncrement = true;
+        return this;
+    }
+
     public Column notNull() {
         this.notNull = true;
         return this;
@@ -82,6 +94,10 @@ public class Column {
 
         if (notNull) {
             sql.append(" NOT NULL");
+        }
+
+        if (autoIncrement) {
+            sql.append(" AUTO_INCREMENT");
         }
 
         return sql.toString();
