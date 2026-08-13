@@ -1,0 +1,231 @@
+package com.mixplus.library.mysql;
+
+
+
+
+import java.sql.*;
+import java.util.*;
+import java.util.stream.Collectors;
+
+
+public class MySQL {
+    private String host;
+    private int port;
+    private String username;
+    private String password;
+    private String database;
+
+    private Connection connection;
+
+    public MySQL() {
+
+    }
+
+    public void connect() {
+        String url = "jdbc:mysql://" + host + ":" + port + "/" + database;
+
+        try {
+            connection = DriverManager.getConnection(
+                    url,
+                    username,
+                    password
+            );
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to connect to MySQL", e);
+        }
+    }
+
+    public boolean isConnected() {
+        try {
+            return connection != null && !connection.isClosed();
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+    @Deprecated
+    public int executeUpdate(String sql) {
+        try (Statement statement = connection.createStatement()) {
+            return statement.executeUpdate(sql);
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to execute SQL", e);
+        }
+    }
+
+    @Deprecated
+    public List<Map<String, Object>> executeQuery(String sql) {
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        try (
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery(sql)
+                ) {
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+
+            while (resultSet.next()) {
+                Map<String, Object> row = new LinkedHashMap<>();
+
+                for (int i = 1; i <= columnCount; i++) {
+                    String columnName = metaData.getColumnName(i);
+                    Object value = resultSet.getObject(i);
+
+                    row.put(columnName, value);
+                }
+                result.add(row);
+            }
+            return result;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to execute query", e);
+        }
+    }
+
+    public void createTable(String tableName, Column...columns) {
+        if (!isValidIdentifier(tableName)) {
+            throw new IllegalArgumentException(
+                    "Invalid table name: " + tableName
+            );
+        }
+
+        if (columns == null || columns.length == 0) {
+            throw new IllegalArgumentException(
+                    "Columns cannot be null or empty"
+            );
+        }
+
+        String definitions = Arrays.stream(columns)
+                .map(Column::toSQL)
+                .collect(Collectors.joining(", "));
+
+        String sql = "CREATE TABLE " + tableName + " (" + definitions + ")";
+
+        executeUpdate(sql);
+
+    }
+
+    public void insert(String tableName, Map<String, Object> values) {
+        if (tableName == null || tableName.isBlank()) {
+            throw new IllegalArgumentException("Table name cannot be null or empty");
+        }
+
+        if (!isValidIdentifier(tableName)) {
+            throw new IllegalArgumentException("Invalid table name: " + tableName);
+        }
+
+        if (values == null || values.isEmpty()) {
+            throw new IllegalArgumentException("Values cannot be null or empty");
+        }
+        for (String column : values.keySet()) {
+            if (!isValidIdentifier(column)) {
+                throw new IllegalArgumentException(
+                        "Invalid column name: " + column
+                );
+            }
+        }
+
+        String columns = String.join(", ", values.keySet());
+
+        String placeholders = String.join(
+                ", ",
+                Collections.nCopies(values.size(), "?")
+        );
+
+        String sql = "INSERT INTO " + tableName + " (" +
+                columns + ") VALUES (" + placeholders + ")";
+
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            int index = 1;
+
+            for (Object value : values.values()) {
+                statement.setObject(index++, value);
+            }
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to insert data", e);
+        }
+    }
+
+    public List<Map<String, Object>> select(String tableName) {
+        if (!isValidIdentifier(tableName)) {
+            throw new IllegalArgumentException(
+                    "Invalid table name: " + tableName
+            );
+        }
+
+        if (!isTable(tableName)) {
+            throw new IllegalArgumentException(
+                    "Table does not exist: " + tableName
+            );
+        }
+
+        return executeQuery("SELECT * FROM " + tableName);
+    }
+
+    public void close() {
+        try {
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        } catch (SQLException sqlException) {
+            throw new RuntimeException("Failed to close connection", sqlException);
+        }
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setDatabase(String database) {
+        this.database = database;
+    }
+
+    public boolean isDatabase(String databaseName) {
+        String sql = "SHOW DATABASES LIKE ?";
+
+        try (
+                PreparedStatement statement = connection.prepareStatement(sql)
+                ) {
+            statement.setString(1, databaseName);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to check database", e);
+        }
+    }
+
+    public boolean isTable(String tableName) {
+        String sql = "SHOW TABLES LIKE ?";
+
+        try (
+                PreparedStatement statement = connection.prepareStatement(sql)
+                ) {
+            statement.setString(1, tableName);
+
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to check table", e);
+        }
+    }
+
+    private boolean isValidIdentifier(String value) {
+        return value != null && value.matches("[a-zA-Z0-9_]+");
+    }
+}
