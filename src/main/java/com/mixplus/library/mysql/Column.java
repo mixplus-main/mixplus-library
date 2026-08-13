@@ -10,6 +10,7 @@ public class Column {
     private boolean primaryKey;
     private boolean notNull;
     private boolean autoIncrement;
+    private boolean unique;
 
     private Column(String name, String type) {
         if (!StringUtil.isValidIdentifier(name)) {
@@ -76,6 +77,17 @@ public class Column {
         return this;
     }
 
+    public Column unique() {
+        if (!type.equals("INT") && !type.equals("BIGINT")) {
+            throw new IllegalStateException(
+                    "UNIQUE requires an integer type"
+            );
+        }
+
+        this.unique = true;
+        return this;
+    }
+
     public Column notNull() {
         this.notNull = true;
         return this;
@@ -98,6 +110,10 @@ public class Column {
 
         if (autoIncrement) {
             sql.append(" AUTO_INCREMENT");
+        }
+
+        if (unique) {
+            sql.append(" UNIQUE");
         }
 
         return sql.toString();
