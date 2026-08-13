@@ -37,6 +37,33 @@ public class MySQL {
 
     }
 
+    public void createDatabase(String name) {
+        if (!StringUtil.isValidIdentifier(name)) {
+            throw new IllegalArgumentException(
+                    "Invalid database name: " + database
+            );
+        }
+
+        String url = "jdbc:mysql://" + host + ":" + port;
+        try (
+                Connection connection = DriverManager.getConnection(
+                        url,
+                        username,
+                        password
+                );
+                Statement statement = connection.createStatement()) {
+            statement.executeUpdate(
+                    "CREATE DATABASE IF NOT EXISTS " + database
+            );
+
+        } catch (SQLException e) {
+            throw new RuntimeException(
+                    "Failed to create database: " + database,
+                    e
+            );
+        }
+    }
+
     public void connect() {
         String url = "jdbc:mysql://" + host + ":" + port + "/" + database;
 
@@ -48,14 +75,6 @@ public class MySQL {
             );
         } catch (SQLException e) {
             throw new RuntimeException("Failed to connect to MySQL", e);
-        }
-    }
-
-    public boolean isConnected() {
-        try {
-            return connection != null && !connection.isClosed();
-        } catch (SQLException e) {
-            return false;
         }
     }
 
@@ -311,6 +330,14 @@ public class MySQL {
             }
         } catch (SQLException e) {
             throw new RuntimeException("Failed to check database", e);
+        }
+    }
+
+    public boolean isConnected() {
+        try {
+            return connection != null && !connection.isClosed();
+        } catch (SQLException e) {
+            return false;
         }
     }
 
