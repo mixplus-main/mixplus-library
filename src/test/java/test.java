@@ -1,13 +1,9 @@
+import com.mixplus.library.mysql.Column;
+import com.mixplus.library.mysql.DataType;
 import com.mixplus.library.mysql.MySQL;
-import com.mixplus.library.network.Ping;
-import com.mixplus.library.system.CPU;
+import com.mixplus.library.mysql.Where;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
+
 import java.util.Map;
 
 public class test {
@@ -24,7 +20,40 @@ public class test {
 
 
 
+        try {
+            mySQL.executeUpdate("""
+                drop table ttt;
+                """);
+        } catch (Exception e) {
+            System.out.println("ERROR");
+        }
 
+        mySQL.createTable(
+                "ttt",
+                Column.of("id", DataType.INT).primaryKey(),
+                Column.of("name", DataType.VARCHAR, 30)
+        );
+
+        mySQL.insert(
+                "ttt",
+                Map.of("id", 5,
+                        "name", "teahi"
+                )
+                );
+
+        int count = mySQL.update(
+                "ttt",
+                Map.of(
+                        "id", 0,
+                        "name", ""
+                ),
+                Where.of("id", "=", 5)
+        );
+
+        int c2 = mySQL.delete(
+                "ttt",
+                Where.of("id", "=", 5)
+        );
 
 
     }

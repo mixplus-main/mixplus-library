@@ -3,6 +3,8 @@ package com.mixplus.library.mysql;
 
 
 
+import com.mixplus.library.unit.StringUtil;
+
 import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -82,7 +84,7 @@ public class MySQL {
     }
 
     public void createTable(String tableName, Column...columns) {
-        if (!isValidIdentifier(tableName)) {
+        if (!StringUtil.isValidIdentifier(tableName)) {
             throw new IllegalArgumentException(
                     "Invalid table name: " + tableName
             );
@@ -109,7 +111,7 @@ public class MySQL {
             throw new IllegalArgumentException("Table name cannot be null or empty");
         }
 
-        if (!isValidIdentifier(tableName)) {
+        if (!StringUtil.isValidIdentifier(tableName)) {
             throw new IllegalArgumentException("Invalid table name: " + tableName);
         }
 
@@ -117,7 +119,7 @@ public class MySQL {
             throw new IllegalArgumentException("Values cannot be null or empty");
         }
         for (String column : values.keySet()) {
-            if (!isValidIdentifier(column)) {
+            if (!StringUtil.isValidIdentifier(column)) {
                 throw new IllegalArgumentException(
                         "Invalid column name: " + column
                 );
@@ -146,8 +148,97 @@ public class MySQL {
         }
     }
 
+    public int update(
+            String tableName,
+            Map<String, Object> values,
+            Where where
+    ) {
+        if (!StringUtil.isValidIdentifier(tableName)) {
+            throw new RuntimeException("Invalid table name: " + tableName);
+        }
+
+        if (values == null || values.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Values cannot be null or empty"
+            );
+        }
+
+        for (String column : values.keySet()) {
+            if (!StringUtil.isValidIdentifier(column)) {
+                throw new IllegalArgumentException(
+                        "Invalid column name: " + column
+                );
+            }
+        }
+
+        if (where == null) {
+            throw new IllegalArgumentException(
+                    "Where cannot be null or empty"
+            );
+        }
+
+        String set =  values.keySet().stream()
+                .map(column -> column + " = ?")
+                .collect(Collectors.joining(", "));
+
+        String sql = "UPDATE " + tableName +
+                " SET " + set +
+                " WHERE " + where.getSql();
+
+        try (
+                PreparedStatement statement = connection.prepareStatement(sql)
+                ) {
+            int index = 1;
+
+            for (Object value : values.values()) {
+                statement.setObject(index++, value);
+            }
+
+            for (Object parameter : where.getParameters()) {
+                statement.setObject(index++, parameter);
+            }
+
+            return statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to update data", e);
+        }
+    }
+
+    public int delete(
+            String tableName,
+            Where where
+    ) {
+        if (!StringUtil.isValidIdentifier(tableName)) {
+            throw new IllegalArgumentException(
+                    "Invalid table name: " + tableName
+            );
+        }
+
+        if (where == null) {
+            throw new IllegalArgumentException(
+                    "Where cannot be null or empty"
+            );
+        }
+
+        String sql = "DELETE FROM " + tableName + " WHERE " + where.getSql();
+
+        try (
+                PreparedStatement statement = connection.prepareStatement(sql)
+                ) {
+            int index = 1;
+
+            for (Object parameter : where.getParameters()) {
+                statement.setObject(index++, parameter);
+            }
+
+            return statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to delete data", e);
+        }
+    }
+
     public List<Map<String, Object>> select(String tableName) {
-        if (!isValidIdentifier(tableName)) {
+        if (!StringUtil.isValidIdentifier(tableName)) {
             throw new IllegalArgumentException(
                     "Invalid table name: " + tableName
             );
@@ -223,9 +314,5 @@ public class MySQL {
         } catch (SQLException e) {
             throw new RuntimeException("Failed to check table", e);
         }
-    }
-
-    private boolean isValidIdentifier(String value) {
-        return value != null && value.matches("[a-zA-Z0-9_]+");
     }
 }

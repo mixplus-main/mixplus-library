@@ -1,5 +1,8 @@
 package com.mixplus.library.mysql;
 
+import com.mixplus.library.unit.StringUtil;
+
+
 public class Column {
     private final String name;
     private final String type;
@@ -8,7 +11,7 @@ public class Column {
     private boolean notNull;
 
     private Column(String name, String type) {
-        if (name == null || !name.matches("[a-zA-Z0-9_]+")) {
+        if (!StringUtil.isValidIdentifier(name)) {
             throw new IllegalArgumentException("Invalid column name: " + name);
         }
 
@@ -20,8 +23,40 @@ public class Column {
         this.type = type;
     }
 
-    public static Column of(String name, String type) {
-        return new Column(name, type);
+    public static Column of(String name, DataType type) {
+        if (type == null) {
+            throw new IllegalArgumentException("Type cannot be null");
+        }
+
+        if (type.requiresSize()) {
+            throw new IllegalArgumentException(
+                    type + " requires a size"
+            );
+        }
+        return new Column(name, type.getSql());
+    }
+
+    public static Column of(String name, DataType type, int size) {
+        if (type == null) {
+            throw new IllegalArgumentException("Type cannot be null");
+        }
+
+        if (type.requiresSize()) {
+            throw new IllegalArgumentException(
+                    type + " requires a size"
+            );
+        }
+
+        if (size <= 0) {
+            throw new IllegalArgumentException(
+                    "Size must be greater than 0"
+            );
+        }
+
+        return new Column(
+                name,
+                type.getSql() + "(" + size + ")"
+        );
     }
 
     public Column primaryKey() {
