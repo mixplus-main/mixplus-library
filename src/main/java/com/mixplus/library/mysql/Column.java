@@ -78,8 +78,6 @@ public class Column {
     }
 
     public Column unique() {
-
-
         this.unique = true;
         return this;
     }
