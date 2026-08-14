@@ -116,6 +116,40 @@ public class MySQL {
         }
     }
 
+    @Deprecated
+    public List<Map<String, Object>> executeQuery(String sql, List<Object> parameters) {
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        try (
+                PreparedStatement statement = connection.prepareStatement(sql)
+                ) {
+            for (int i =0; i < parameters.size(); i++) {
+                statement.setObject(i + 1, parameters.get(i));
+            }
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                ResultSetMetaData metaData = resultSet.getMetaData();
+                int columnCount = metaData.getColumnCount();
+
+                while (resultSet.next()) {
+                    Map<String, Object> row = new LinkedHashMap<>();
+
+                    for (int i = 1; i <= columnCount; i++) {
+                        String columnName = metaData.getColumnName(i);
+                        Object value = resultSet.getObject(i);
+
+                        row.put(columnName, value);
+                    }
+                    result.add(row);
+                }
+
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to execute query", e);
+        }
+    }
+
     public void createTable(String tableName, TableElement... elements) {
         if (!StringUtil.isValidIdentifier(tableName)) {
             throw new IllegalArgumentException(
