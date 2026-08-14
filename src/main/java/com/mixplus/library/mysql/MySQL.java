@@ -287,6 +287,22 @@ public class MySQL {
         return executeQuery("SELECT * FROM " + tableName);
     }
 
+    public List<Map<String, Object>> select(String tableName, Where where) {
+        if (!StringUtil.isValidIdentifier(tableName)) {
+            throw new IllegalArgumentException(
+                    "Invalid table name: " + tableName
+            );
+        }
+
+        if (!isTable(tableName)) {
+            throw new IllegalArgumentException(
+                    "Table does not exist: " + tableName
+            );
+        }
+
+        return executeQuery("SELECT * FROM " + tableName + " WHERE " + where.toSQL());
+    }
+
     public void close() {
         try {
             if (connection != null && !connection.isClosed()) {
