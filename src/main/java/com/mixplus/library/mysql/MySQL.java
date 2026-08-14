@@ -334,7 +334,7 @@ public class MySQL {
             );
         }
 
-        return executeQuery("SELECT * FROM " + tableName + " WHERE " + where.toSQL());
+        return executeQuery("SELECT * FROM " + tableName + " WHERE " + where.toSQL(), where.getParameters());
     }
 
     public void close() {
