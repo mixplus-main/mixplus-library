@@ -11,6 +11,7 @@ public class Column implements TableElement {
     private boolean notNull;
     private boolean autoIncrement;
     private boolean unique;
+    private Object defaultValue;
 
     private Column(String name, String type) {
         if (!StringUtil.isValidIdentifier(name)) {
@@ -87,6 +88,11 @@ public class Column implements TableElement {
         return this;
     }
 
+    public Column defaultValue(Object value) {
+        this.defaultValue = value;
+        return this;
+    }
+
     @Override
     public String toSQL() {
         StringBuilder sql = new StringBuilder();
@@ -109,6 +115,20 @@ public class Column implements TableElement {
 
         if (unique) {
             sql.append(" UNIQUE");
+        }
+
+        if (defaultValue != null) {
+            sql.append(" DEFAULT ");
+
+            if (defaultValue instanceof String) {
+                sql.append("'")
+                        .append(defaultValue.toString().replace("'", "''"))
+                        .append("'");
+            } else if (defaultValue instanceof Boolean bool) {
+                sql.append(bool ? "TRUE" : "FALSE");
+            } else {
+                sql.append(defaultValue);
+            }
         }
 
         return sql.toString();
