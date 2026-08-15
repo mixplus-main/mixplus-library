@@ -337,6 +337,126 @@ public class MySQL {
         return executeQuery("SELECT * FROM " + tableName + " WHERE " + where.toSQL(), where.getParameters());
     }
 
+    public List<Map<String, Object>> select(
+            String tableName,
+            Where where,
+            int limit,
+            int offset
+    ) {
+        if (!StringUtil.isValidIdentifier(tableName)) {
+            throw new IllegalArgumentException(
+                    "Invalid table name: " + tableName
+            );
+        }
+
+        if (!isTable(tableName)) {
+            throw new IllegalArgumentException(
+                    "Table does not exist: " + tableName
+            );
+        }
+
+        if (limit < 0 || offset < 0) {
+            throw new IllegalArgumentException(
+                    "limit and offset must be non-negative."
+            );
+        }
+
+        return executeQuery(
+                "SELECT * FROM " + tableName +
+                        " WHERE " + where.toSQL() +
+                        " LIMIT " + limit +
+                        " OFFSET " + offset
+        );
+    }
+
+    public List<Map<String, Object>> select(
+            String tableName,
+            Where where,
+            int limit
+    ) {
+        if (!StringUtil.isValidIdentifier(tableName)) {
+            throw new IllegalArgumentException(
+                    "Invalid table name: " + tableName
+            );
+        }
+
+        if (!isTable(tableName)) {
+            throw new IllegalArgumentException(
+                    "Table does not exist: " + tableName
+            );
+        }
+
+        if (limit < 0) {
+            throw new IllegalArgumentException(
+                    "limit and offset must be non-negative."
+            );
+        }
+
+        return executeQuery(
+                "SELECT * FROM " + tableName +
+                        " WHERE " + where.toSQL() +
+                        " LIMIT " + limit
+        );
+    }
+
+    public List<Map<String, Object>> select(
+            String tableName,
+            int limit,
+            int offset
+    ) {
+        if (!StringUtil.isValidIdentifier(tableName)) {
+            throw new IllegalArgumentException(
+                    "Invalid table name: " + tableName
+            );
+        }
+
+        if (!isTable(tableName)) {
+            throw new IllegalArgumentException(
+                    "Table does not exist: " + tableName
+            );
+        }
+
+        if (limit < 0 || offset < 0) {
+            throw new IllegalArgumentException(
+                    "limit and offset must be non-negative."
+            );
+        }
+
+        return executeQuery(
+                "SELECT * FROM " + tableName +
+                        " LIMIT " + limit +
+                        " OFFSET " + offset
+        );
+    }
+
+    public List<Map<String, Object>> select(
+            String tableName,
+            int limit
+    ) {
+        if (!StringUtil.isValidIdentifier(tableName)) {
+            throw new IllegalArgumentException(
+                    "Invalid table name: " + tableName
+            );
+        }
+
+        if (!isTable(tableName)) {
+            throw new IllegalArgumentException(
+                    "Table does not exist: " + tableName
+            );
+        }
+
+        if (limit < 0) {
+            throw new IllegalArgumentException(
+                    "limit and offset must be non-negative."
+            );
+        }
+
+        return executeQuery(
+                "SELECT * FROM " + tableName +
+                        " LIMIT " + limit
+        );
+    }
+
     public void close() {
         try {
             if (connection != null && !connection.isClosed()) {
