@@ -11,7 +11,8 @@ public enum DataType {
     CHAR("CHAR", true),
     DATE("DATE", false),
     DATETIME("DATETIME", false),
-    TIMESTAMP("TIMESTAMP", false);
+    TIMESTAMP("TIMESTAMP", false),
+    BLOB("BLOB", false);
 
     private final String sql;
     private final boolean requiresSize;
