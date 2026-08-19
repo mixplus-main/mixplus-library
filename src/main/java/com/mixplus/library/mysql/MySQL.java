@@ -536,4 +536,45 @@ public class MySQL {
             throw new RuntimeException("Failed to check table", e);
         }
     }
+
+    public long insertAndGetId(String tableName, Map<String, Object> values) {
+        if (values == null || values.isEmpty()) {
+            throw new IllegalArgumentException("Values cannot be null or empty");
+        }
+
+        if (!StringUtil.isValidIdentifier(tableName)) {
+            throw new IllegalArgumentException(
+                    "Invalid table name: " + tableName
+            );
+        }
+
+        String columns = String.join(", ", values.keySet());
+        String placeholders = String.join(", ", Collections.nCopies(values.size(), "?"));
+
+        String sql = "INSERT INTO " + tableName +
+                " (" + columns + ") VALUES (" + placeholders + ")";
+
+        try (
+                PreparedStatement statement =
+                        connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)
+                ) {
+            int index = 1;
+
+            for (Object value : values.values()) {
+                statement.setObject(index++, value);
+            }
+
+            statement.executeUpdate();
+
+            try (ResultSet resultSet = statement.getGeneratedKeys()) {
+                if (!resultSet.next()) {
+                    throw new SQLException("Failed to retrieve generated key");
+                }
+
+                return resultSet.getLong(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to insert data", e);
+        }
+    }
 }
