@@ -457,6 +457,30 @@ public class MySQL {
         );
     }
 
+    public boolean transaction(Transaction transaction) {
+        try {
+            connection.setAutoCommit(false);
+            transaction.execute();
+
+            connection.commit();
+            return true;
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException rollbackException) {
+                throw new RuntimeException(rollbackException.getMessage());
+            }
+
+            return false;
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
     public void close() {
         try {
             if (connection != null && !connection.isClosed()) {
