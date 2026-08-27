@@ -467,11 +467,15 @@ public class MySQL {
 
             connection.commit();
             return true;
-        } catch (SQLException e) {
+        } catch (SQLException | RuntimeException e) {
             try {
                 connection.rollback();
             } catch (SQLException rollbackException) {
                 throw new RuntimeException(rollbackException.getMessage());
+            }
+
+            if (e instanceof RuntimeException runtimeException) {
+                throw runtimeException;
             }
 
             return false;
