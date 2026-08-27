@@ -460,7 +460,10 @@ public class MySQL {
     public boolean transaction(Transaction transaction) {
         try {
             connection.setAutoCommit(false);
-            transaction.execute();
+            if (!transaction.execute()) {
+                connection.rollback();
+                return false;
+            }
 
             connection.commit();
             return true;
