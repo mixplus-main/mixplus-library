@@ -4,12 +4,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class System {
+public class OperatingSystem {
     private static final ScheduledExecutorService scheduler =
             Executors.newSingleThreadScheduledExecutor();
 
 
-    private System() {
+    private OperatingSystem() {
 
     }
 
