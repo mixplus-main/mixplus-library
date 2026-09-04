@@ -1,7 +1,6 @@
 package com.mixplus.library.system;
 
 import oshi.SystemInfo;
-import oshi.software.os.OperatingSystemVersion;
 
 import java.time.Duration;
 import java.util.concurrent.Executors;
