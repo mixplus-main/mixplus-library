@@ -1,6 +1,7 @@
 package com.mixplus.library.system;
 
 import com.mixplus.library.unit.DataUnit;
+import com.mixplus.library.unit.Percentage;
 import oshi.SystemInfo;
 import oshi.software.os.OSProcess;
 
@@ -80,7 +81,7 @@ public class OperatingSystem {
                     new ProcessInfo(
                             process.getProcessID(),
                             process.getName(),
-                            unit.fromBytes(process.getResidentSetSize()),
+                            Percentage.of(process.getResidentSetSize(), Memory.getTotal()),
                             process.getThreadCount(),
                             process.getPath()
                     )
