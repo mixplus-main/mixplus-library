@@ -81,7 +81,8 @@ public class OperatingSystem {
                             process.getProcessID(),
                             process.getName(),
                             unit.fromBytes(process.getResidentSetSize()),
-                            process.getThreadCount()
+                            process.getThreadCount(),
+                            process.getPath()
                     )
             );
         }

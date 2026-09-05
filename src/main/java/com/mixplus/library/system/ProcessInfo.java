@@ -4,5 +4,6 @@ public record ProcessInfo(
         int pid,
         String name,
         long memoryUsage,
-        int threadCount
+        int threadCount,
+        String path
 ) { }
