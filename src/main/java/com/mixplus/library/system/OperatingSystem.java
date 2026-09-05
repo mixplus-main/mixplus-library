@@ -1,8 +1,12 @@
 package com.mixplus.library.system;
 
+import com.mixplus.library.unit.DataUnit;
 import oshi.SystemInfo;
+import oshi.software.os.OSProcess;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -66,6 +70,22 @@ public class OperatingSystem {
      */
     public static Duration getUptime() {
         return Duration.ofSeconds(os.getSystemUptime());
+    }
+
+    public static List<ProcessInfo> getProcessList(DataUnit unit) {
+        List<ProcessInfo> processInfoList = new ArrayList<>();
+
+        for (OSProcess process : os.getProcesses()) {
+            processInfoList.add(
+                    new ProcessInfo(
+                            process.getProcessID(),
+                            process.getName(),
+                            unit.fromBytes(process.getResidentSetSize()),
+                            process.getThreadCount()
+                    )
+            );
+        }
+        return processInfoList;
     }
 
 }
