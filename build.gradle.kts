@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.mixplus.library"
-version = "1.12.23-SNAPSHOT"
+version = "1.13.23-SNAPSHOT"
 
 publishing {
     repositories {
@@ -34,11 +34,12 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:6.0.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    implementation("com.github.oshi:oshi-core:6.9.2")
+    compileOnly("com.github.oshi:oshi-core:6.9.2")
 
     implementation("com.mysql:mysql-connector-j:9.4.0")
 
     implementation("org.slf4j:slf4j-api:2.0.17")
+    compileOnly("com.google.code.gson:gson:2.13.2")
 }
 
 tasks.test {
