@@ -22,30 +22,39 @@ public class Https {
 
     }
 
-    public static Map<String, Object> request(String url) {
+    public static Response request(String url) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .GET()
                     .build();
 
-            String body = CLIENT.send(
-                    request,
-                    HttpResponse.BodyHandlers.ofString()
-            ).body();
+            HttpResponse<String> response =
+                    CLIENT.send(
+                            request,
+                            HttpResponse.BodyHandlers.ofString()
+                    );
 
+            Map<String, Object> body =
+                    gson.fromJson(
+                            response.body(),
+                            new TypeToken<Map<String, Object>>() {}.getType()
+                    );
 
-
-            return gson.fromJson(
-                    body,
-                    new TypeToken<Map<String, Object>>() {}.getType()
+            return new Response(
+                    response.statusCode(),
+                    body
             );
-        } catch (IOException | InterruptedException e) {
+
+        } catch (InterruptedException | IOException e) {
             if (e instanceof InterruptedException) {
                 Thread.currentThread().interrupt();
             }
 
-            throw new RuntimeException("Request Exception: " + e.getMessage());
+            throw new RuntimeException(
+                    "Request Exception: " + e.getMessage(),
+                    e
+            );
         }
     }
 }
