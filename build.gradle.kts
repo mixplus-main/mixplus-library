@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.mixplus.library"
-version = "1.14.23-SNAPSHOT"
+version = "1.14.33-SNAPSHOT"
 
 publishing {
     repositories {

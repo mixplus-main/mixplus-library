@@ -4,11 +4,11 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
-import java.io.InterruptedIOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.Map;
 
 
@@ -23,9 +23,18 @@ public class Https {
     }
 
     public static Response request(String url) {
+        return request(url, Duration.ofSeconds(5));
+    }
+
+    public static Response request(String url, Duration timeout) {
+        return request(URI.create(url), timeout);
+    }
+
+    public static Response request(URI uri, Duration timeout) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
+                    .uri(uri)
+                    .timeout(timeout)
                     .GET()
                     .build();
 
