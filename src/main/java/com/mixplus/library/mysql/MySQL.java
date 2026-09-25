@@ -174,7 +174,7 @@ public class MySQL {
 
     }
 
-    public void insert(String tableName, Map<String, Object> values) {
+    public int insert(String tableName, Map<String, Object> values) {
         if (tableName == null || tableName.isBlank()) {
             throw new IllegalArgumentException("Table name cannot be null or empty");
         }
@@ -210,7 +210,7 @@ public class MySQL {
             for (Object value : values.values()) {
                 statement.setObject(index++, value);
             }
-            statement.executeUpdate();
+            return statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Failed to insert data", e);
         }
