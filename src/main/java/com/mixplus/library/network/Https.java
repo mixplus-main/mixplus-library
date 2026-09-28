@@ -22,48 +22,85 @@ public class Https {
 
     }
 
-    public static Response request(String url) {
+    public static Response request(String url) throws IOException, InterruptedException {
         return request(url, Duration.ofSeconds(5));
     }
 
-    public static Response request(String url, Duration timeout) {
+    public static Response request(String url, Duration timeout) throws IOException, InterruptedException {
         return request(URI.create(url), timeout);
     }
 
-    public static Response request(URI uri, Duration timeout) {
-        try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(uri)
-                    .timeout(timeout)
-                    .GET()
-                    .build();
+    public static Response request(URI uri, Duration timeout) throws IOException, InterruptedException {
+        return get(uri, timeout, Map.of());
+    }
 
-            HttpResponse<String> response =
-                    CLIENT.send(
-                            request,
-                            HttpResponse.BodyHandlers.ofString()
-                    );
+    public static Response get(
+            URI uri,
+            Duration timeout,
+            Map<String, String> header
+    ) throws IOException, InterruptedException{
 
-            Map<String, Object> body =
-                    gson.fromJson(
-                            response.body(),
-                            new TypeToken<Map<String, Object>>() {}.getType()
-                    );
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
+                .uri(uri)
+                .timeout(timeout);
 
-            return new Response(
-                    response.statusCode(),
-                    body
-            );
 
-        } catch (InterruptedException | IOException e) {
-            if (e instanceof InterruptedException) {
-                Thread.currentThread().interrupt();
-            }
+        header.forEach(builder::header);
 
-            throw new RuntimeException(
-                    "Request Exception: " + e.getMessage(),
-                    e
-            );
-        }
+        HttpRequest request = builder.GET().build();
+
+        return send(request);
+    }
+
+    public static Response post(
+            URI uri,
+            Duration timeout,
+            Map<String, Object> data
+    ) throws IOException, InterruptedException {
+
+        return post(uri, timeout, data, Map.of());
+    }
+
+    public static Response post(
+            URI uri,
+            Duration timeout,
+            Map<String, Object> data,
+            Map<String, String> header
+    ) throws IOException, InterruptedException {
+
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
+                .uri(uri)
+                .timeout(timeout)
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(data)));
+
+        header.forEach(builder::header);
+
+        HttpRequest request = builder.build();
+
+        return send(request);
+    }
+
+    public static Response send(
+            HttpRequest request
+    ) throws IOException, InterruptedException {
+
+        HttpResponse<String> response =
+                CLIENT.send(
+                        request,
+                        HttpResponse.BodyHandlers.ofString()
+                );
+
+        Map<String, Object> body =
+                gson.fromJson(
+                        response.body(),
+                        new TypeToken<Map<String, Object>>() {}.getType()
+                );
+
+
+        return new Response(
+                response.statusCode(),
+                body
+        );
     }
 }

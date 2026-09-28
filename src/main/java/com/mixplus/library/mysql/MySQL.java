@@ -272,6 +272,44 @@ public class MySQL {
         }
     }
 
+    public int update(
+            String tableName,
+            TableElement element,
+            Where where
+    ) {
+        if (!StringUtil.isValidIdentifier(tableName)) {
+            throw new RuntimeException("Invalid table name: " + tableName);
+        }
+
+        if (where == null) {
+            throw new IllegalArgumentException(
+                    "Where cannot be null or empty"
+            );
+        }
+
+        String sql = "UPDATE " + tableName +
+                " SET " + element.toSQL() +
+                " WHERE " + where.toSQL();
+
+        try (
+                PreparedStatement statement = connection.prepareStatement(sql)
+                ) {
+            int index = 1;
+
+            for (Object parameter : element.getParameters()) {
+                statement.setObject(index++, parameter);
+            }
+
+            for (Object parameter : where.getParameters()) {
+                statement.setObject(index++, parameter);
+            }
+
+            return statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to update data", e);
+        }
+    }
+
     public int delete(
             String tableName,
             Where where
