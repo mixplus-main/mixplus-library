@@ -6,4 +6,7 @@ public record Response(
         int statusCode,
         Map<String, Object> body
 ) {
+    public boolean isError() {
+        return statusCode >= 400;
+    }
 }
