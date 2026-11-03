@@ -403,7 +403,8 @@ public class MySQL {
                 "SELECT * FROM " + tableName +
                         " WHERE " + where.toSQL() +
                         " LIMIT " + limit +
-                        " OFFSET " + offset
+                        " OFFSET " + offset,
+                where.getParameters()
         );
     }
 
@@ -433,7 +434,8 @@ public class MySQL {
         return executeQuery(
                 "SELECT * FROM " + tableName +
                         " WHERE " + where.toSQL() +
-                        " LIMIT " + limit
+                        " LIMIT " + limit,
+                where.getParameters()
         );
     }
 
