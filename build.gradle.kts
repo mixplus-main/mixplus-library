@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.mixplus.library"
-version = "1.16.35-SNAPSHOT"
+version = "1.18.35-SNAPSHOT"
 
 publishing {
     repositories {
@@ -39,10 +39,8 @@ dependencies {
     implementation("com.mysql:mysql-connector-j:9.4.0")
     implementation("org.slf4j:slf4j-api:2.0.17")
 
-    compileOnly("com.github.oshi:oshi-core:6.9.2")
     compileOnly("com.google.code.gson:gson:2.13.2")
 
-    testImplementation("com.github.oshi:oshi-core:6.9.2")
     testImplementation("com.google.code.gson:gson:2.13.2")
 
 }
