@@ -13,24 +13,8 @@ import java.util.Map;
 
 public class Test {
     public static void main(String[] args) {
-        MySQL mySQL = new MySQL();
-        mySQL.setHost("localhost");
-        mySQL.setPort(3306);
-        mySQL.setUsername("root");
-        mySQL.setPassword(System.getenv("MYSQL_PASSWORD"));
-
-
-        if (!mySQL.isDatabase("test")) {
-            mySQL.createDatabase("test");
-        }
-
-        mySQL.connect();
-
-        if (!mySQL.isTable("test")) {
-            mySQL.createTable(
-                    "test",
-                    Column.of("amount", DataType.BIGINT).notNull().defaultValue(0)
-            );
+        for (int i = 0; i < 20; i++) {
+            System.out.println(StringUtil.generateCode(i));
         }
 
 
