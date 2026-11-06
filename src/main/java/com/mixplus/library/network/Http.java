@@ -13,12 +13,12 @@ import java.util.Map;
 
 
 
-public class Https {
+public class Http {
     private static  final Gson gson = new Gson();
     private static final HttpClient CLIENT = HttpClient.newHttpClient();
 
 
-    private Https() {
+    private Http() {
 
     }
 
