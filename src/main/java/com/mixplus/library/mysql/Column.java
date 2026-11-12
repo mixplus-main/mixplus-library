@@ -68,6 +68,10 @@ public class Column implements TableElement {
     }
 
     public Column ai() {
+        return autoIncrement();
+    }
+
+    public Column autoIncrement() {
         if (!type.equals("INT") && !type.equals("BIGINT")) {
             throw new IllegalStateException(
                     "AUTO_INCREMENT requires an integer type"
